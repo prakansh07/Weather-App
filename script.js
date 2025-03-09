@@ -42,29 +42,51 @@ const settings = {
 
 
 btn.addEventListener('click', () => {
+	img.classList.remove("d-none");
+	img.src = "./assets/loader.gif";
 	const city = document.getElementById('city').value;
 	settings.url = `https://weather-api138.p.rapidapi.com/weather?city_name=${city}`;
 
 	$.ajax(settings).done(function (response) {
 		//setting all the data to the HTML file
 		name.innerText = response.name;
-		img.src = `https://openweathermap.org/img/wn/${response.weather[0].icon}.png`;
-		img.classList.remove('d-none');
-		title.innerText = 'Weather of ' + response.name;
-		date.innerText = new Date(response.dt * 1000).toLocaleDateString();
-		time.innerText = new Date(response.dt * 1000).toLocaleTimeString();
-		cloudiness.innerText = response.clouds.all; 
-		desc.innerText = response.weather[0].description[0].toUpperCase() + response.weather[0].description.slice(1);
-		visibility.innerText = response.visibility + ' meters';
-		speed.innerText = response.wind.speed + ' m/s';
-		temp.innerText = kelvinToCelsius(response.main.temp);
-		feels.innerText = kelvinToCelsius(response.main.feels_like) + ' °C';
-		maxTemp.innerText = kelvinToCelsius(response.main.temp_max) + ' °C';
-		minTemp.innerText = kelvinToCelsius(response.main.temp_min) + ' °C';
-		humidity.innerText = response.main.humidity;
-		pressure.innerText = response.main.pressure + ' hPa';
-		sunrise.innerText = unixToTime(response.sys.sunrise);
-		sunset.innerText = unixToTime(response.sys.sunset);
+		if (response.cod !== 200) {
+			img.classList.add("d-none");
+			title.innerText = '';
+			date.innerText = '';
+			time.innerText = '';
+			cloudiness.innerText = ''; 
+			desc.innerText = '';
+			visibility.innerText = '';
+			speed.innerText = '';
+			temp.innerText = '';
+			feels.innerText = '';
+			maxTemp.innerText = '';
+			minTemp.innerText = '';
+			humidity.innerText = '';
+			pressure.innerText = '';
+			sunrise.innerText = '';
+			sunset.innerText = '';
+			return;
+		} else if (response.cod === 200){
+			img.src = `https://openweathermap.org/img/wn/${response.weather[0].icon}.png`;
+			img.classList.remove("d-none");
+			title.innerText = 'Weather of ' + response.name;
+			date.innerText = new Date(response.dt * 1000).toLocaleDateString();
+			time.innerText = new Date(response.dt * 1000).toLocaleTimeString();
+			cloudiness.innerText = response.clouds.all; 
+			desc.innerText = response.weather[0].description[0].toUpperCase() + response.weather[0].description.slice(1);
+			visibility.innerText = response.visibility + ' meters';
+			speed.innerText = response.wind.speed + ' m/s';
+			temp.innerText = kelvinToCelsius(response.main.temp);
+			feels.innerText = kelvinToCelsius(response.main.feels_like) + ' °C';
+			maxTemp.innerText = kelvinToCelsius(response.main.temp_max) + ' °C';
+			minTemp.innerText = kelvinToCelsius(response.main.temp_min) + ' °C';
+			humidity.innerText = response.main.humidity;
+			pressure.innerText = response.main.pressure + ' hPa';
+			sunrise.innerText = unixToTime(response.sys.sunrise);
+			sunset.innerText = unixToTime(response.sys.sunset);
+		}
 	});
 });
 
